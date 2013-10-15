@@ -1,0 +1,9 @@
+language: python
+python:
+  - "2.7"
+install:
+  - pip install nose
+before_install: utils/instalar_dependencias_travis.sh
+script: utils/ejecutar_tests_en_travis.sh
+virtualenv:
+  system_site_packages: true

@@ -1,0 +1,35 @@
+m.y = 100
+m.x = 0
+
+r.y = 0
+r.x = 0
+
+Debería dar cuadrantes los dos en 1     +
+
+m.y = - 100
+m.x = 0
+
+r.y = 0
+r.x = 0
+No detecta al actor Mono  en el suadrante del robot +
+
+m.x = 100
+m.y = 0
+
+r.y = 0
+r.x = 0
+
+
+saca mal los puntos del actor. Tendrían que ser 
+
+
+Se da cuenta que las rectas no son perpendiculares   +++
+Detecta a los dos en el mismo cuadrante   +++
+Si bien lo dos están en el mismo cuadrante, las rectas no son perpendiculares  -----
+Entonces saca mal alguna de las cuentas                   -------------
+
+
+
+
+
+
