@@ -4,9 +4,11 @@
 import time
 import Image
 
+from PyQt4 import QtGui
 from pilas.fondos import *
 from pilas.actores import Pizarra
 from pilas.actores import Ejes
+from datetime import datetime, timedelta
 
 def evaluarCuadrante(unActor):
 
@@ -79,11 +81,13 @@ def puntosParaLaRecta(unActor):
 
 def actor_no_valido(actor):
     return (not isinstance(actor, Pizarra) and (not isinstance(actor, Fondo)) and  (not isinstance(actor, Ejes)))
-
-def wait(seconds):
+    
+def wait(seconds = 0):
     """ Produce un retardo de seconds segundos en los que el robot no hace nada. """
-    time.sleep(seconds)
-
+ 
+    now = datetime.now()
+    while now + timedelta(0, seconds, 0) > datetime.now():
+        QtGui.QApplication.processEvents()
 
 
 

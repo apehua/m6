@@ -43,6 +43,7 @@ class Sense(QtGui.QMainWindow):
         pilas.escena_actual().tareas.condicional(1, mostrarPing)
         pilas.escena_actual().tareas.condicional(1, mostrarSensoresDeLinea)
             
+
 #### Robot
 
 class Robot(Actor):
@@ -95,14 +96,6 @@ class Robot(Actor):
     
     def realizarMovimiento(self, vel, seconds):
         """ El robot avanza con velocidad vel durante seconds segundos. """
-        
-        def adelante():
-            self.hacer(pilas.comportamientos.Avanzar(self.velocidad, self.velocidad))
-            return (tiempoini + seconds > time.time())
-	
-	def atras():
-            self.hacer(pilas.comportamientos.Retroceder(self.velocidad, self.velocidad))
-	    return (tiempoini + seconds > time.time())
 	
         def adelanteSinTiempo():
             self.hacer(pilas.comportamientos.Avanzar(self.velocidad, self.velocidad))
@@ -112,26 +105,23 @@ class Robot(Actor):
             self.hacer(pilas.comportamientos.Retroceder(self.velocidad, self.velocidad))
             return (self.movimiento)
 
-	tiempoini = time.time()
+	self.stop()
 	self.setVelocidad(vel) 
-	            
+        self.movimiento = True	
+            
 	if (self.velocidadValida(vel, 10, 100)) :
-            if (seconds == -1):
-                pilas.escena_actual().tareas.condicional(0.1, adelanteSinTiempo) 
-                self.movimiento = True
-            else:
-                pilas.escena_actual().tareas.condicional(0.1, adelante)
+            pilas.escena_actual().tareas.condicional(0.1, adelanteSinTiempo)
+            if (seconds != -1):
+                wait(seconds)
+                self.stop()                 
+        elif (self.velocidadValida(vel, -100, -10)) : 
+            pilas.escena_actual().tareas.condicional(0.1, atrasSinTiempo)
+            self.velocidad = self.velocidad * -1
+            if (seconds != -1):   
+                wait(seconds)
+                self.stop()
         else:
-            if (self.velocidadValida(vel, -100, -10)) : 
-                self.velocidad = self.velocidad * -1
-                if (seconds == -1):   
-                    pilas.escena_actual().tareas.condicional(0.1, atrasSinTiempo)
-                    self.movimiento = True
-                else:
-                    pilas.escena_actual().tareas.condicional(0.1, atras) 
-      
-	    else:
-                print   """ Rangos de velocidades válidas:
+            print   """ Rangos de velocidades válidas:
                                 -100 a -10
                                   10 a 100   """
     
@@ -147,15 +137,7 @@ class Robot(Actor):
 
 
     def realizarGiro(self, vel, seconds):
-        
-        def derecha():
-            self.hacer_luego(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
-            return (tiempoini + seconds > time.time())
-            
-        def izquierda():
-            self.hacer_luego(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
-            return (tiempoini + seconds > time.time())
-        
+             
         def izquierdaSinTiempo():
             self.hacer_luego(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
             return (self.movimiento)
@@ -164,9 +146,10 @@ class Robot(Actor):
             self.hacer_luego(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
             return (self.movimiento)
 
-	tiempoini = time.time()
+	self.stop()
         self.setVelocidad(vel)
-	
+	self.movimiento = True	
+
 	if (self.velocidadValida(vel, 10, 100)) :
             if (seconds == -1): 
                 pilas.escena_actual().tareas.condicional(0.1, derechaSinTiempo)
