@@ -64,13 +64,14 @@ class Robot(Actor):
         self.color = pilas.colores.negro
 	self.bajalapiz()
         self.tiempo = 0	
-#        self.aprender(pilas.habilidades.SeguidoPorLaCamara)
+#       self.aprender(pilas.habilidades.SeguidoPorLaCamara)
         self.aprender(pilas.habilidades.SeMantieneEnPantalla)
         """ Inicializa el robot y lo asocia con la placa board. """
         self.robotid = robotid
         self.board = board
         self.name = ''
 	self.board.agregarRobot(self)
+        self.tarea = None
     
     # Redefinir el método eliminar de la clase Actor para que lo elimine también de la lista de robots de Board    
     def eliminar(self):
@@ -92,6 +93,8 @@ class Robot(Actor):
 
     def forward(self, vel=50, seconds=-1):
         """ El robot avanza con velocidad vel durante seconds segundos. """
+        if not (self.tarea is None):
+            self.tarea.terminar()
         self.board.mover(self, vel,  seconds)
     
     def realizarMovimiento(self, vel, seconds):
@@ -107,15 +110,16 @@ class Robot(Actor):
 
 	self.stop()
 	self.setVelocidad(vel) 
-        self.movimiento = True	
             
 	if (self.velocidadValida(vel, 10, 100)) :
-            pilas.escena_actual().tareas.condicional(0.1, adelanteSinTiempo)
+            self.movimiento = True
+            self.tarea = pilas.escena_actual().tareas.condicional(0.1, adelanteSinTiempo)
             if (seconds != -1):
                 wait(seconds)
                 self.stop()                 
         elif (self.velocidadValida(vel, -100, -10)) : 
-            pilas.escena_actual().tareas.condicional(0.1, atrasSinTiempo)
+            self.movimiento = True
+            self.tarea = pilas.escena_actual().tareas.condicional(0.1, atrasSinTiempo)
             self.velocidad = self.velocidad * -1
             if (seconds != -1):   
                 wait(seconds)
@@ -128,13 +132,15 @@ class Robot(Actor):
 	
     def backward(self, vel=50, seconds=-1):
 	""" El robot retrocede con velocidad vel durante seconds segundos.  """
+        if not (self.tarea is None):
+            self.tarea.terminar()
 	self.board.mover(self, -vel, seconds)
 
     ## Movimiento de giro
     def turnRight(self, vel=50, seconds=-1):
+        self.stop()
         """ El robot gira a la derecha con velocidad vel durante seconds segundos. """
         self.board.girar(self, vel, seconds)
-
 
     def realizarGiro(self, vel, seconds):
              
@@ -146,33 +152,32 @@ class Robot(Actor):
             self.hacer_luego(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
             return (self.movimiento)
 
-	self.stop()
+        self.stop()
         self.setVelocidad(vel)
-	self.movimiento = True	
+	
 
 	if (self.velocidadValida(vel, 10, 100)) :
-            if (seconds == -1): 
-                pilas.escena_actual().tareas.condicional(0.1, derechaSinTiempo)
-                self.movimiento = True    
-            else:
-                pilas.escena_actual().tareas.condicional(0.1, derecha)
-        else:  
-            if (self.velocidadValida(vel, -100, -10)) :
-                 self.velocidad = self.velocidad * -1
-                 if (seconds == -1):
-                     pilas.escena_actual().tareas.condicional(0.1, izquierdaSinTiempo)
-                     self.movimiento = True
-                 else: 
-                     pilas.escena_actual().tareas.condicional(0.1, izquierda)
-              
-            else:                 
-                print   """ Rangos de velocidades válidas:
+            self.movimiento = True
+            pilas.escena_actual().tareas.condicional(0.1, derechaSinTiempo)
+            if (seconds != -1): 
+                wait(seconds)
+                self.stop()            
+        elif (self.velocidadValida(vel, -100, -10)) :
+            self.movimiento = True
+            pilas.escena_actual().tareas.condicional(0.1, izquierdaSinTiempo)
+            self.velocidad = self.velocidad * -1
+            if (seconds != -1):
+                 wait(seconds)
+                 self.stop()                  
+        else:                 
+            print   """ Rangos de velocidades válidas:
                                 -100 a -10
                                   10 a 100   """
 
    
     def turnLeft(self, vel=50, seconds=-1):
         """ El robot gira a la izquierda con velocidad vel durante seconds segundos. """
+        self.stop()
         self.board.girar(self, -vel, seconds)
     
  

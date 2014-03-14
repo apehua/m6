@@ -41,6 +41,7 @@ class Board(Actor):
 
     def mover(self,unRobot, vel, seconds):
         """ Envía un movimiento  vertical/horizontal a toos los robots con el mismo ID  """ 
+        self.detener(unRobot)
         for i in self.listaDeRobots:
             if (i.getId() == unRobot.getId()) :
                 i.realizarMovimiento(vel, seconds)
