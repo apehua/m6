@@ -81,7 +81,7 @@ class Robot(Actor):
     ## Movimiento horizontal y vertical
 
     def setVelocidad(self, valor):
-           """ Asigna una velocidad de movimiento real al robot """
+        """ Asigna una velocidad de movimiento real al robot """
         if ((valor % 2 == 0) and (valor % 10 == 0)):
             self.velocidad = valor / 10 / 2
         else:
@@ -93,8 +93,7 @@ class Robot(Actor):
 
     def forward(self, vel=50, seconds=-1):
         """ El robot avanza con velocidad vel durante seconds segundos. """
-        if not (self.tarea is None):
-            self.tarea.terminar()
+        self.stop()
         self.board.mover(self, vel,  seconds)
 
     def realizarMovimiento(self, vel, seconds):
@@ -132,24 +131,23 @@ class Robot(Actor):
 
     def backward(self, vel=50, seconds=-1):
         """ El robot retrocede con velocidad vel durante seconds segundos.  """
-        if not (self.tarea is None):
-            self.tarea.terminar()
+        self.stop()
         self.board.mover(self, -vel, seconds)
 
     ## Movimiento de giro
     def turnRight(self, vel=50, seconds=-1):
-        self.stop()
         """ El robot gira a la derecha con velocidad vel durante seconds segundos. """
+        self.stop()
         self.board.girar(self, vel, seconds)
 
     def realizarGiro(self, vel, seconds):
 
         def izquierdaSinTiempo():
-            self.hacer_luego(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
+            self.hacer(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
             return (self.movimiento)
 
         def derechaSinTiempo():
-            self.hacer_luego(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
+            self.hacer(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
             return (self.movimiento)
 
         self.stop()
@@ -158,13 +156,13 @@ class Robot(Actor):
 
         if (self.velocidadValida(vel, 10, 100)) :
             self.movimiento = True
-            pilas.escena_actual().tareas.condicional(0.1, derechaSinTiempo)
+            self.tarea = pilas.escena_actual().tareas.condicional(0.1, derechaSinTiempo)
             if (seconds != -1):
                 wait(seconds)
                 self.stop()
         elif (self.velocidadValida(vel, -100, -10)) :
             self.movimiento = True
-            pilas.escena_actual().tareas.condicional(0.1, izquierdaSinTiempo)
+            self.tarea = pilas.escena_actual().tareas.condicional(0.1, izquierdaSinTiempo)
             self.velocidad = self.velocidad * -1
             if (seconds != -1):
                  wait(seconds)
@@ -195,6 +193,9 @@ class Robot(Actor):
 
     def detenerse(self):
         self.movimiento = False
+        if not (self.tarea is None):
+            self.tarea.terminar()
+        self.tarea = None
 
     def stop(self):
         self.board.detener(self)
