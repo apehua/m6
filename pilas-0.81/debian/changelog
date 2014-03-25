@@ -1,3 +1,9 @@
+pilas (0.81-2) unstable; urgency=low
+
+  * Simulador del robot Multiplo N6 agregado.
+
+ -- Soporte Lihuen <soportelihuen@linti.unlp.edu.ar>  Tue, 25 Mar 2014 14:39:30 -0300
+
 pilas (0.81-1) unstable; urgency=low
 
   * source package automatically created by stdeb 0.6.0+git
