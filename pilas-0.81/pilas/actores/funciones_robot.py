@@ -10,7 +10,7 @@ from pilas.actores import Pizarra
 from pilas.actores import Ejes
 from datetime import datetime, timedelta
 
-def evaluarCuadrante(unActor):
+def _evaluarCuadrante(unActor):
 
     # Retorna la ubicación del actor teniendo en cuenta su rotación
     if (unActor.rotacion  >= 270 and unActor.rotacion < 360):    # Norte - noreste
@@ -24,7 +24,7 @@ def evaluarCuadrante(unActor):
     return cuatri
             
 
-def evaluarPerpendicularidadDeObjetos(robot, unactor, xRobotb, yRobotb, xActorb, yActorb) :
+def _evaluarPerpendicularidadDeObjetos(robot, unactor, xRobotb, yRobotb, xActorb, yActorb) :
 
     distanciaEntreXactorX = xActorb - unactor.x
     distanciaEntreYactorY = yActorb - unactor.y
@@ -37,7 +37,7 @@ def evaluarPerpendicularidadDeObjetos(robot, unactor, xRobotb, yRobotb, xActorb,
     return ( (distanciaEntreXactorX * distanciaEntreRobotA) == 0) and ( (distanciaEntreYactorY * distanciaEntreRobotB) == 0 )
 
 
-def puntosParaLaRecta(unActor):
+def _puntosParaLaRecta(unActor):
 
     # Retorna la ubicación del actor teniendo en cuenta su rotación
     # print "nActor.rotacion ", unActor.rotacion
@@ -79,7 +79,7 @@ def puntosParaLaRecta(unActor):
 
     return (puntoX, puntoY)
 
-def actor_no_valido(actor):
+def _actor_no_valido(actor):
     return (not isinstance(actor, Pizarra) and (not isinstance(actor, Fondo)) and  (not isinstance(actor, Ejes)))
     
 def wait(seconds = 0):

@@ -26,7 +26,7 @@ class Board(Actor):
         return self.device
 
    
-    def eliminarRobots(self):
+    def _eliminarRobots(self):
 	for i in self.listaDeRobots:
             del(i)
 
@@ -39,21 +39,21 @@ class Board(Actor):
         for i in self.listaDeRobots:
                 print i.getId()
 
-    def mover(self,unRobot, vel, seconds):
+    def _mover(self,unRobot, vel, seconds):
         """ Envía un movimiento  vertical/horizontal a toos los robots con el mismo ID  """ 
         for i in self.listaDeRobots:
             if (i.getId() == unRobot.getId()) :
-                i.realizarMovimiento(vel, seconds)
+                i._realizarMovimiento(vel, seconds)
 
-    def girar(self,unRobot, vel, seconds):
+    def _girar(self,unRobot, vel, seconds):
         """ Envía un movimiento a izquierda/derecha a toos los robots con el mismo ID  """
         for i in self.listaDeRobots:
             if (i.getId() == unRobot.getId()) :
-                i.realizarGiro(vel, seconds)
+                i._realizarGiro(vel, seconds)
 
-    def detener(self, unRobot):
+    def _detener(self, unRobot):
         for i in self.listaDeRobots:
             if (i.getId() == unRobot.getId()) :
-                i.detenerse()
+                i._detenerse()
  
 

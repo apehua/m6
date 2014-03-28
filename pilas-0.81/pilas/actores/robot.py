@@ -80,7 +80,7 @@ class Robot(Actor):
 
     ## Movimiento horizontal y vertical
 
-    def setVelocidad(self, valor):
+    def _setVelocidad(self, valor):
         """ Asigna una velocidad de movimiento real al robot """
         if ((valor % 2 == 0) and (valor % 10 == 0)):
             self.velocidad = valor / 10 / 2
@@ -88,15 +88,15 @@ class Robot(Actor):
             cvalor = valor / 10
             self.velocidad = (cvalor / 2 ) + 1
 
-    def velocidadValida(self, vel, exta, extb):
+    def _velocidadValida(self, vel, exta, extb):
         return ((vel >= exta) & (vel <= extb))
 
     def forward(self, vel=50, seconds=-1):
         """ El robot avanza con velocidad vel durante seconds segundos. """
         self.stop()
-        self.board.mover(self, vel,  seconds)
+        self.board._mover(self, vel,  seconds)
 
-    def realizarMovimiento(self, vel, seconds):
+    def _realizarMovimiento(self, vel, seconds):
         """ El robot avanza con velocidad vel durante seconds segundos. """
 
         def adelanteSinTiempo():
@@ -108,15 +108,15 @@ class Robot(Actor):
             return (self.movimiento)
 
         self.stop()
-        self.setVelocidad(vel)
+        self._setVelocidad(vel)
 
-        if (self.velocidadValida(vel, 10, 100)) :
+        if (self._velocidadValida(vel, 10, 100)) :
             self.movimiento = True
             self.tarea = pilas.escena_actual().tareas.condicional(0.1, adelanteSinTiempo)
             if (seconds != -1):
                 wait(seconds)
                 self.stop()
-        elif (self.velocidadValida(vel, -100, -10)) :
+        elif (self._velocidadValida(vel, -100, -10)) :
             self.movimiento = True
             self.tarea = pilas.escena_actual().tareas.condicional(0.1, atrasSinTiempo)
             self.velocidad = self.velocidad * -1
@@ -132,15 +132,15 @@ class Robot(Actor):
     def backward(self, vel=50, seconds=-1):
         """ El robot retrocede con velocidad vel durante seconds segundos.  """
         self.stop()
-        self.board.mover(self, -vel, seconds)
+        self.board._mover(self, -vel, seconds)
 
     ## Movimiento de giro
     def turnRight(self, vel=50, seconds=-1):
         """ El robot gira a la derecha con velocidad vel durante seconds segundos. """
         self.stop()
-        self.board.girar(self, vel, seconds)
+        self.board._girar(self, vel, seconds)
 
-    def realizarGiro(self, vel, seconds):
+    def _realizarGiro(self, vel, seconds):
 
         def izquierdaSinTiempo():
             self.hacer(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
@@ -154,13 +154,13 @@ class Robot(Actor):
         self.setVelocidad(vel)
 
 
-        if (self.velocidadValida(vel, 10, 100)) :
+        if (self._velocidadValida(vel, 10, 100)) :
             self.movimiento = True
             self.tarea = pilas.escena_actual().tareas.condicional(0.1, derechaSinTiempo)
             if (seconds != -1):
                 wait(seconds)
                 self.stop()
-        elif (self.velocidadValida(vel, -100, -10)) :
+        elif (self._velocidadValida(vel, -100, -10)) :
             self.movimiento = True
             self.tarea = pilas.escena_actual().tareas.condicional(0.1, izquierdaSinTiempo)
             self.velocidad = self.velocidad * -1
@@ -176,7 +176,7 @@ class Robot(Actor):
     def turnLeft(self, vel=50, seconds=-1):
         """ El robot gira a la izquierda con velocidad vel durante seconds segundos. """
         self.stop()
-        self.board.girar(self, -vel, seconds)
+        self.board._girar(self, -vel, seconds)
 
 
     def beep(self, freq=200, seconds=0):
@@ -191,14 +191,14 @@ class Robot(Actor):
         audio.write(beep)
         audio.close()
 
-    def detenerse(self):
+    def _detenerse(self):
         self.movimiento = False
         if not (self.tarea is None):
             self.tarea.terminar()
         self.tarea = None
 
     def stop(self):
-        self.board.detener(self)
+        self.board._detener(self)
 
     def batery(self):
         """ Devuelve el voltaje de las baterías del robot. """
@@ -210,37 +210,37 @@ class Robot(Actor):
           #   2  -> +-
           #   3  -> --
           #   4  -> -+
-    def actores_cuadrante_1(self):
+    def _actores_cuadrante_1(self):
         actores = []
         # print "dentro de cuadrante 1"
         for actor in pilas.escena_actual().actores:
             # print actor
-            if ((id(actor) != id(self)) and  (actor.x >= self.x and actor.y >= self.y) and actor_no_valido(actor)):
+            if ((id(actor) != id(self)) and  (actor.x >= self.x and actor.y >= self.y) and _actor_no_valido(actor)):
                 actores.append(actor)
                 # print actor
         return actores
 
-    def actores_cuadrante_2(self):
+    def _actores_cuadrante_2(self):
         actores = []
         # print "dentro del cuadrante 2"
         for actor in pilas.escena_actual().actores:
-            if (id(actor) != id(self)  and  (actor.x >= self.x and actor.y <= self.y) and actor_no_valido(actor)):
+            if (id(actor) != id(self)  and  (actor.x >= self.x and actor.y <= self.y) and _actor_no_valido(actor)):
                     actores.append(actor)
         return actores
 
-    def actores_cuadrante_3(self):
+    def _actores_cuadrante_3(self):
         # print "dentro del cuadrante 3"
         actores = []
         for actor in pilas.escena_actual().actores:
-            if (id(actor) != id(self) and (actor.x <= self.x and actor.y <= self.y) and actor_no_valido(actor)):
+            if (id(actor) != id(self) and (actor.x <= self.x and actor.y <= self.y) and _actor_no_valido(actor)):
                     actores.append(actor)
         return actores
 
-    def actores_cuadrante_4(self):
+    def _actores_cuadrante_4(self):
         # print "dentro del cuadrante 4"
         actores = []
         for actor in pilas.escena_actual().actores:
-            if (id(actor) != id(self) and (actor.x <= self.x and actor.y >= self.y) and actor_no_valido(actor)):
+            if (id(actor) != id(self) and (actor.x <= self.x and actor.y >= self.y) and _actor_no_valido(actor)):
                     actores.append(actor)
         return actores
 
@@ -249,15 +249,15 @@ class Robot(Actor):
 
         if cuadrante == 1 :
             # print " _buscarActoresEnCadaCuadrante 1"
-            actores = self.actores_cuadrante_1()
+            actores = self._actores_cuadrante_1()
         elif cuadrante == 2:
-            actores = self.actores_cuadrante_2()
+            actores = self._actores_cuadrante_2()
             # print " _buscarActoresEnCadaCuadrante 2"
         elif cuadrante == 3:
-            actores = self.actores_cuadrante_3()
+            actores = self._actores_cuadrante_3()
             # print " _buscarActoresEnCadaCuadrante  3 "
         else:
-            actores = self.actores_cuadrante_4()
+            actores = self._actores_cuadrante_4()
             # print " _buscarActoresEnCadaCuadrante   4 "
         return actores
 
@@ -273,16 +273,16 @@ class Robot(Actor):
         for actor in actores:
              cuac = evaluarCuadrante(actor)
              # print "cuadrante del actor", cuac
-             actorA, actorB = puntosParaLaRecta(actor)
-             robotA, robotB = puntosParaLaRecta(self)
+             actorA, actorB = _puntosParaLaRecta(actor)
+             robotA, robotB = _puntosParaLaRecta(self)
              # print "puntos del acto: x, y ",  actorA, actorB
              # print "puntos del actor robot x, y ",  robotA, robotB
              if (evaluarPerpendicularidadDeObjetos(self, actor, robotA, robotB, actorA, actorB)) :
                  ## Los actores tienen sus rectas perpendiculares
                   # print "Las rectas son perpendiculares"
-                  actorA, actorB = puntosParaLaRecta(actor)
-                  rectaX, rectaY = self.crerLasRectasEncontrarLosPuntosEnLosQueSeCortan(actorA, actorB, actor, robotA, robotB)
-                  if (self.evaluarPosicionDelPuntoDeInterseccionYElSegmentoDelActor(rectaX, rectaY, actor,  cua )):
+                  actorA, actorB = _puntosParaLaRecta(actor)
+                  rectaX, rectaY = self._crerLasRectasEncontrarLosPuntosEnLosQueSeCortan(actorA, actorB, actor, robotA, robotB)
+                  if (self._evaluarPosicionDelPuntoDeInterseccionYElSegmentoDelActor(rectaX, rectaY, actor,  cua )):
                         # print "es un obstaculo"
                         dis = distancia_entre_radios_de_colision_de_dos_actores(self, actor)
                         if (dis <= valor):
@@ -309,7 +309,7 @@ class Robot(Actor):
 
 
 
-    def crerLasRectasEncontrarLosPuntosEnLosQueSeCortan(self, otroRobotX, otroRobotY, unActor, otroPuntoActorX, otroPuntoActorY ) :
+    def _crerLasRectasEncontrarLosPuntosEnLosQueSeCortan(self, otroRobotX, otroRobotY, unActor, otroPuntoActorX, otroPuntoActorY ) :
 
         # if ((self.x - otroRobotX)  == 0 ):
            # El robot está en una recta vertical
@@ -343,7 +343,7 @@ class Robot(Actor):
         return (valorX, valorY)
 
 
-    def evaluarPosicionDelPuntoDeInterseccionYElSegmentoDelActor(self, puntoX, puntoY, unActor, cuadrante):
+    def _evaluarPosicionDelPuntoDeInterseccionYElSegmentoDelActor(self, puntoX, puntoY, unActor, cuadrante):
         # Ya se que son perpendiculares y también conozco el punto en que se interconectan
         print cuadrante
         print "punto donde se sruzan los puntos", puntoX, puntoY
