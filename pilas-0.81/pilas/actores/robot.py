@@ -151,7 +151,7 @@ class Robot(Actor):
             return (self.movimiento)
 
         self.stop()
-        self.setVelocidad(vel)
+        self._setVelocidad(vel)
 
 
         if (self._velocidadValida(vel, 10, 100)) :
@@ -200,7 +200,7 @@ class Robot(Actor):
     def stop(self):
         self.board._detener(self)
 
-    def batery(self):
+    def battery(self):
         """ Devuelve el voltaje de las baterías del robot. """
         return 0
 
@@ -263,7 +263,7 @@ class Robot(Actor):
 
 
     def _analizarDistanciaEntreActores(self):
-        cua = evaluarCuadrante(self)
+        cua = _evaluarCuadrante(self)
         # print "cuadrante del robot ", cua
         valor = 100
         actores = self._buscarActoresEnCadaCuadrante(cua)
@@ -271,7 +271,7 @@ class Robot(Actor):
 
         ## Recorre la lista de actores de la escena y saca la distancia de todos los que son perpendiculares a robot
         for actor in actores:
-             cuac = evaluarCuadrante(actor)
+             cuac = _evaluarCuadrante(actor)
              # print "cuadrante del actor", cuac
              actorA, actorB = _puntosParaLaRecta(actor)
              robotA, robotB = _puntosParaLaRecta(self)
@@ -376,7 +376,7 @@ class Robot(Actor):
         """ Devuelve los valores de los sensores de linea. """
 
         ancho, alto =  pilas.mundo.get_gestor().escena_actual().get_fondo().dimension_fondo()
-        xa, ya, xb, yb =self._determinar_pixel_por_cuadrante(evaluarCuadrante(self))
+        xa, ya, xb, yb =self._determinar_pixel_por_cuadrante(_evaluarCuadrante(self))
 
         vi = 0
         ximagen = ancho / 2 + xa
