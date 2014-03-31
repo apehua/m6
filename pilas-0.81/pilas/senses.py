@@ -73,9 +73,9 @@ class Ui_Senses(object):
         self.medidor.setFont(font)
         self.medidor.setObjectName(_fromUtf8("medidor"))
         self.horizontalLayout_6.addWidget(self.medidor)
-        self.batery = QtGui.QLCDNumber(self.horizontalLayoutWidget_4)
-        self.batery.setObjectName(_fromUtf8("batery"))
-        self.horizontalLayout_6.addWidget(self.batery)
+        self.battery = QtGui.QLCDNumber(self.horizontalLayoutWidget_4)
+        self.battery.setObjectName(_fromUtf8("battery"))
+        self.horizontalLayout_6.addWidget(self.battery)
 
         self.retranslateUi(Senses)
         QtCore.QMetaObject.connectSlotsByName(Senses)

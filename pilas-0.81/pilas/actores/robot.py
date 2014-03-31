@@ -26,7 +26,7 @@ class Sense(QtGui.QMainWindow):
     def _mostrarInfo(self, unRobot):
 
         def mostrarBateria():
-            self.ui.batery.display(  '%0.2f' %  unRobot.batery())
+            self.ui.battery.display(  '%0.2f' %  unRobot.battery())
             return self.activo
 
         def mostrarPing():

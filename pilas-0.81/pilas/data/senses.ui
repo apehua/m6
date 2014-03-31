@@ -113,7 +113,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLCDNumber" name="batery"/>
+     <widget class="QLCDNumber" name="battery"/>
     </item>
    </layout>
   </widget>

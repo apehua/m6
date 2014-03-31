@@ -13,7 +13,7 @@ class Sense(QtGui.QMainWindow):
     def _mostrarInfo(self):
         
         def mostrarBateria():
-            self.ui.bateria.display( "{0:.2f}".f , self.robot.batery())
+            self.ui.bateria.display( "{0:.2f}".f , self.robot.battery())
 
         def mostrarPing():
             self.ui.nping.display( "{0:.2f}".f , self.robot.ping())
