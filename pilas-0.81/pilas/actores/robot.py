@@ -1,14 +1,16 @@
 # -*- encoding: utf-8 -*-
+
 import pilas
 import time
+import sys
+
 from pilas.actores import Actor
 from pilas.fondos import  *
 from pilas.actores import Pizarra
 from funciones_robot import *
 from pilas.utils import distancia_entre_radios_de_colision_de_dos_actores
-
-import sys
 from PyQt4 import QtGui, QtCore, uic
+
 
 class Sense(QtGui.QMainWindow):
     def __init__(self, unRobot):
@@ -46,27 +48,34 @@ class Sense(QtGui.QMainWindow):
 
 #### Robot
 
-class Robot(Actor):
+class Robot():
 
     def __init__(self,board, robotid=0, x=0, y=0):
-        self.pizarra = pilas.actores.Pizarra()
 
+       
+        self.actor = pilas.actores.Tortuga()
+        
+        # Se le cambia la imagen
         imagen = pilas.imagenes.cargar('RobotN6.png')
-        Actor.__init__(self, imagen, x=x, y=y)
-        self.rotacion = 270
-        self.velocidad = 3
-        self.pasos = 1
-        self.anterior_x = x
-        self.anterior_y = y
-        self.bajalapiz()
-        self.aprender(pilas.habilidades.Arrastrable)
-        self.radio_de_colision = 31
-        self.color = pilas.colores.negro
-        self.bajalapiz()
-        self.tiempo = 0
-#       self.aprender(pilas.habilidades.SeguidoPorLaCamara)
-        self.aprender(pilas.habilidades.SeMantieneEnPantalla)
+        self.actor.set_imagen(imagen)
+        
+
+        self.actor.rotacion = 270
+        self.actor.velocidad = 3
+        self.actor.pasos = 1
+        self.actor.anterior_x = x
+        self.actor.anterior_y = y
+        self.actor.bajalapiz()
+        self.actor.aprender(pilas.habilidades.Arrastrable)
+        self.actor.radio_de_colision = 31
+        self.actor.color = pilas.colores.negro
+        self.actor.bajalapiz()
+        self.actor.tiempo = 0
+#       self.actor.aprender(pilas.habilidades.SeguidoPorLaCamara)
+        self.actor.aprender(pilas.habilidades.SeMantieneEnPantalla)
+
         """ Inicializa el robot y lo asocia con la placa board. """
+
         self.robotid = robotid
         self.board = board
         self.name = ''
@@ -76,17 +85,17 @@ class Robot(Actor):
     # Redefinir el método eliminar de la clase Actor para que lo elimine también de la lista de robots de Board
     def eliminar(self):
         self.board.eliminarDeLaLista(self)
-        Actor.eliminar(self)
+        Actor.eliminar(self.actor)
 
     ## Movimiento horizontal y vertical
 
     def _setVelocidad(self, valor):
         """ Asigna una velocidad de movimiento real al robot """
         if ((valor % 2 == 0) and (valor % 10 == 0)):
-            self.velocidad = valor / 10 / 2
+            self.actor.velocidad = valor / 10 / 2
         else:
             cvalor = valor / 10
-            self.velocidad = (cvalor / 2 ) + 1
+            self.actor.velocidad = (cvalor / 2 ) + 1
 
     def _velocidadValida(self, vel, exta, extb):
         return ((vel >= exta) & (vel <= extb))
@@ -100,11 +109,11 @@ class Robot(Actor):
         """ El robot avanza con velocidad vel durante seconds segundos. """
 
         def adelanteSinTiempo():
-            self.hacer(pilas.comportamientos.Avanzar(self.velocidad, self.velocidad))
+            self.actor.hacer(pilas.comportamientos.Avanzar(self.velocidad, self.velocidad))
             return (self.movimiento)
 
         def atrasSinTiempo():
-            self.hacer(pilas.comportamientos.Retroceder(self.velocidad, self.velocidad))
+            self.actor.hacer(pilas.comportamientos.Retroceder(self.velocidad, self.velocidad))
             return (self.movimiento)
 
         self.stop()
@@ -119,7 +128,7 @@ class Robot(Actor):
         elif (self._velocidadValida(vel, -100, -10)) :
             self.movimiento = True
             self.tarea = pilas.escena_actual().tareas.condicional(0.1, atrasSinTiempo)
-            self.velocidad = self.velocidad * -1
+            self.actor.velocidad = self.actor.velocidad * -1
             if (seconds != -1):
                 wait(seconds)
                 self.stop()
@@ -143,11 +152,11 @@ class Robot(Actor):
     def _realizarGiro(self, vel, seconds):
 
         def izquierdaSinTiempo():
-            self.hacer(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
+            self.actor.hacer(pilas.comportamientos.Girar(-abs(self.velocidad), self.velocidad))
             return (self.movimiento)
 
         def derechaSinTiempo():
-            self.hacer(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
+            self.actor.hacer(pilas.comportamientos.Girar(abs(self.velocidad), self.velocidad))
             return (self.movimiento)
 
         self.stop()
@@ -163,7 +172,7 @@ class Robot(Actor):
         elif (self._velocidadValida(vel, -100, -10)) :
             self.movimiento = True
             self.tarea = pilas.escena_actual().tareas.condicional(0.1, izquierdaSinTiempo)
-            self.velocidad = self.velocidad * -1
+            self.actor.velocidad = self.actor.velocidad * -1
             if (seconds != -1):
                  wait(seconds)
                  self.stop()
@@ -215,7 +224,7 @@ class Robot(Actor):
         # print "dentro de cuadrante 1"
         for actor in pilas.escena_actual().actores:
             # print actor
-            if ((id(actor) != id(self)) and  (actor.x >= self.x and actor.y >= self.y) and _actor_no_valido(actor)):
+            if ((id(actor) != id(self).actor) and  (actor.x >= self.actor.x and actor.y >= self.actor.y) and _actor_no_valido(actor)):
                 actores.append(actor)
                 # print actor
         return actores
@@ -224,7 +233,7 @@ class Robot(Actor):
         actores = []
         # print "dentro del cuadrante 2"
         for actor in pilas.escena_actual().actores:
-            if (id(actor) != id(self)  and  (actor.x >= self.x and actor.y <= self.y) and _actor_no_valido(actor)):
+            if (id(actor) != id(self.actor)  and  (actor.x >= self.actor.x and actor.y <= self.actor.y) and _actor_no_valido(actor)):
                     actores.append(actor)
         return actores
 
@@ -232,7 +241,7 @@ class Robot(Actor):
         # print "dentro del cuadrante 3"
         actores = []
         for actor in pilas.escena_actual().actores:
-            if (id(actor) != id(self) and (actor.x <= self.x and actor.y <= self.y) and _actor_no_valido(actor)):
+            if (id(actor) != id(self.actor) and (actor.x <= self.actor.x and actor.y <= self.actor.y) and _actor_no_valido(actor)):
                     actores.append(actor)
         return actores
 
@@ -240,7 +249,7 @@ class Robot(Actor):
         # print "dentro del cuadrante 4"
         actores = []
         for actor in pilas.escena_actual().actores:
-            if (id(actor) != id(self) and (actor.x <= self.x and actor.y >= self.y) and _actor_no_valido(actor)):
+            if (id(actor) != id(self.actor) and (actor.x <= self.x and actor.y >= self.actor.y) and _actor_no_valido(actor)):
                     actores.append(actor)
         return actores
 
@@ -263,7 +272,7 @@ class Robot(Actor):
 
 
     def _analizarDistanciaEntreActores(self):
-        cua = _evaluarCuadrante(self)
+        cua = _evaluarCuadrante(self.actor)
         # print "cuadrante del robot ", cua
         valor = 100
         actores = self._buscarActoresEnCadaCuadrante(cua)
@@ -274,15 +283,15 @@ class Robot(Actor):
              cuac = _evaluarCuadrante(actor)
              # print "cuadrante del actor", cuac
              actorA, actorB = _puntosParaLaRecta(actor)
-             robotA, robotB = _puntosParaLaRecta(self)
+             robotA, robotB = _puntosParaLaRecta(self.actor)
              # print "puntos del acto: x, y ",  actorA, actorB
              # print "puntos del actor robot x, y ",  robotA, robotB
-             if (evaluarPerpendicularidadDeObjetos(self, actor, robotA, robotB, actorA, actorB)) :
+             if (_evaluarPerpendicularidadDeObjetos(self.actor, actor, robotA, robotB, actorA, actorB)) :
                  ## Los actores tienen sus rectas perpendiculares
                   # print "Las rectas son perpendiculares"
                   actorA, actorB = _puntosParaLaRecta(actor)
                   rectaX, rectaY = self._crerLasRectasEncontrarLosPuntosEnLosQueSeCortan(actorA, actorB, actor, robotA, robotB)
-                  if (self._evaluarPosicionDelPuntoDeInterseccionYElSegmentoDelActor(rectaX, rectaY, actor,  cua )):
+                  if (self._evaluarPosicionDelPuntoDeInterseccionYElSegmentoDelActor(rectaX, rectaY, actor,  cua)):
                         # print "es un obstaculo"
                         dis = distancia_entre_radios_de_colision_de_dos_actores(self, actor)
                         if (dis <= valor):
@@ -318,11 +327,10 @@ class Robot(Actor):
 ### otro caso es que si el de la recta vertical es el actor,  la verificación es otra
 
 
-
            # entonces no necesito sacar la intersección
         # Recta robot
-        pendienteRobot = (self.y - otroRobotY ) / (self.x - otroRobotX )
-        independienteRobat = ( pendienteRobot * pendienteRobot ) - self.y
+        pendienteRobot = (self.actor.y - otroRobotY ) / (self.actor.x - otroRobotX )
+        independienteRobat = ( pendienteRobot * pendienteRobot ) - self.actor.y
         # ecuación: y = pendienteRobot.x + independienteRobat
 
         # Recta Actor
@@ -361,22 +369,22 @@ class Robot(Actor):
     def _determinar_pixel_por_cuadrante(self, cuadrante):
         if cuadrante == 1 :
 
-            return (self.x - 2, self.y + 30, self.x + 2, self.y + 30, )
+            return (self.actor.x - 2, self.actor.y + 30, self.actor.x + 2, self.actor.y + 30)
         else:
             if cuadrante == 2:
-                return (self.x + 30, self.y + 2, self.x + 30, self.y - 2)
+                return (self.actor.x + 30, self.actor.y + 2, self.actor.x + 30, self.actor.y - 2)
             else:
                 if cuadrante == 3:
-                    return (self.x + 2, self.y - 30, self.x - 2, self.y - 30)
+                    return (self.actor.x + 2, self.actor.y - 30, self.actor.x - 2, self.actor.y - 30)
                 else:
-                    return (self.x - 30, self.y - 2, self.x - 30, self.y + 2)
+                    return (self.actor.x - 30, self.actor.y - 2, self.actor.x - 30, self.actor.y + 2)
 
 
     def getLine(self):
         """ Devuelve los valores de los sensores de linea. """
 
         ancho, alto =  pilas.mundo.get_gestor().escena_actual().get_fondo().dimension_fondo()
-        xa, ya, xb, yb =self._determinar_pixel_por_cuadrante(_evaluarCuadrante(self))
+        xa, ya, xb, yb =self._determinar_pixel_por_cuadrante(_evaluarCuadrante(self.actor))
 
         vi = 0
         ximagen = ancho / 2 + xa
@@ -395,9 +403,7 @@ class Robot(Actor):
         return (vi / 3.0 , vd / 3.0)
 
     def senses(self):
-
         ventana = Sense(self)
-
 
     ## Identificadores
 
@@ -423,39 +429,6 @@ class Robot(Actor):
         """ Imprime en la terminal el mensaje msj. """
         print msj
 
-
-
-    ## Aspectos del Actor
-
-    def actualizar(self):
-        if self.anterior_x != self.x or self.anterior_y != self.y:
-            self.dibujar_linea_desde_el_punto_anterior()
-            self.anterior_x = self.x
-            self.anterior_y = self.y
-
-    def dibujar_linea_desde_el_punto_anterior(self):
-        self.pizarra.linea(self.anterior_x, self.anterior_y, self.x, self.y, self.color, grosor=4)
-
-    def bajalapiz(self):
-        self.lapiz_bajo = True
-
-    def subelapiz(self):
-        self.lapiz_bajo = False
-
-    def pon_color(self, color):
-        self.color = color
-        return self._color
-
-    def set_color(self, color):
-        self._color = color
-
-    def get_color(self):
-        return self._color
-
-    color = property(get_color, set_color)
-
-    def pintar(self, color=None):
-        self.pizarra.pintar(color)
 
 
 
